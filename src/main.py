@@ -1,3 +1,5 @@
+import mylib
+
 print('Selamat Datang di Pasar Buah!')
 
 # Definisikan stock buah
@@ -10,48 +12,15 @@ hargaApel = 10000
 hargaJeruk = 15000
 hargaAnggur = 20000
 
-# Minta input jumlah buah apel
-while True:
-    # Input jumlah
-    nApel = int(input('Masukkan jumlah Apel: '))
-    # Membandingkan antara permintaan dengan stock
-    if nApel > stockApel:
-        print(f'Jumlah terlalu banyak, stock tersisa {stockApel} buah')
-        continue
-    # Berhenti minta input, ketika permintaan terpenuhi
-    break
+# Minta input jumlah buah dan hitung harga buah
+nApel, totalHargaApel = mylib.inputBuah(nama='Apel', stock=stockApel, harga=hargaApel)
+nJeruk, totalHargaJeruk = mylib.inputBuah(nama='Jeruk', stock=stockJeruk, harga=hargaJeruk)
+nAnggur, totalHargaAnggur = mylib.inputBuah(nama='Anggur', stock=stockAnggur, harga=hargaAnggur)
 
-# Minta input jumlah buah Jeruk
-while True:
-    # Input jumlah
-    nJeruk = int(input('Masukkan jumlah Jeruk: '))
-    # Membandingkan antara permintaan dengan stock
-    if nJeruk > stockJeruk:
-        print(f'Jumlah terlalu banyak, stock tersisa {stockJeruk} buah')
-        continue
-    # Berhenti minta input, ketika permintaan terpenuhi
-    break
-
-# Minta input jumlah buah Anggur
-while True:
-    # Input jumlah
-    nAnggur = int(input('Masukkan jumlah Anggur: '))
-    # Membandingkan antara permintaan dengan stock
-    if nAnggur > stockAnggur:
-        print(f'Jumlah terlalu banyak, stock tersisa {stockAnggur} buah')
-        continue
-    # Berhenti minta input, ketika permintaan terpenuhi
-    break
-
-# Hitung total harga per buah
-totalHargaApel = nApel * hargaApel
-totalHargaJeruk = nJeruk * hargaJeruk
-totalHargaAnggur = nAnggur * hargaAnggur
-
-# Hitung total harga belanja
+# Hitung total harga belanjaan
 totalBelanja = totalHargaApel + totalHargaJeruk + totalHargaAnggur
 
-# Tampilkan rincian belanja
+# Tampilkan rincian belanjaan
 print(f'''
 Detail Belanja
       
