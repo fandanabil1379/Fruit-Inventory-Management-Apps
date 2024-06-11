@@ -22,8 +22,8 @@ def integer_validation(title, minval=0, maxval=100):
 
     Args:
         title (String): Pesan yang akan ditampilkan pada layar
-        minval (int, optional): Batas bawah. Defaults to 0.
-        maxval (int, optional): Batas atas. Defaults to 100.
+        minval (int, optional): Nilai minimal. Defaults to 0.
+        maxval (int, optional): Nilai maksimal. Defaults to 100.
 
     Returns:
         Int: Nilai yang diinputkan
@@ -32,7 +32,7 @@ def integer_validation(title, minval=0, maxval=100):
         num = input(title)
         try:
             num = int(num)
-            if num > minval or num < maxval:
+            if num >= minval and num <= maxval:
                 break
             else:
                 print('Angka yang anda masukkan di luar rentang')
@@ -76,7 +76,7 @@ def add(database):
     else:
         database.append([id+1, name, stock, price])
 
-    # Menampilkan database ter-update
+    # Menampilkan database
     show(database)
 
 def delete(database):
@@ -85,10 +85,10 @@ def delete(database):
     Args:
         database (list): Data persediaan buah
     """
-    # Menampilkan database terbaru
+    # Menampilkan database
     show(database)
 
-    # Meminta user input indeks yang akan dihapus
+    # Meminta user untuk input indeks buah yang akan dihapus
     idx = integer_validation(
         title='Masukkan indeks buah yang ingin dihapus: ',
         maxval=len(database)
@@ -101,10 +101,80 @@ def delete(database):
     else:
         print('Buah yang Anda cari tidak ada')
 
-    # Memperbarui indeks buah
+    # Memperbarui urutan indeks buah
     for id, buah in enumerate(database):
         if id != buah[0]:
             database[id][0] = id
 
-    # Menampilkan database terbaru
+    # Menampilkan database
     show(database)
+
+def buy(database):
+    # Menampilkan database
+    show(database)
+    
+    reorder = None
+    keranjang = []
+    while reorder != 'No':
+        # Meminta input untuk indeks dan jumlah buah yang ingin dibeli
+        id = integer_validation(
+            title='Silahkan masukkan indeks buah: ',
+            minval=0,
+            maxval=len(database)-1
+            )
+        stock = integer_validation(
+            title='Silahkan masukkan jumlah buah: ',
+            minval=0,
+            maxval=database[id][2]
+            )
+        
+        # Menambahkan ke dalam keranjang belanja
+        keranjang.append([database[id][1], stock, database[id][3]])
+
+        # Menampilkan keranjang belanja
+        show(database=keranjang, header=['Nama', 'Qty', 'Harga'])
+
+        # Konfirmasi reorder
+        while True:
+            status = string_validation('Mau beli yang lain?: ').lower()
+            if status in ['yes', 'y', 'ya']:
+                reorder = 'Yes'
+            elif status in ['no', 'n', 'tidak']:
+                reorder = 'No'
+            break
+
+    # Menghitung total harga
+    total = 0
+    for id, item in enumerate(keranjang):
+        # Hitung total harga per buah
+        totalHarga = item[1] * item[2]
+
+        # Input total harga ke keranjang
+        keranjang[id].append(totalHarga)
+
+        # Sum seluruh harga
+        total += totalHarga
+
+    # Menampilkan keranjang belanja
+    show(database=keranjang, header=['Nama', 'Qty', 'Harga', 'Total Harga'])
+
+    # Proses pembayaran
+    pembayaran(total)
+
+def pembayaran(totalHarga):
+    while True:
+        # Input jumlah uang
+        bayar = int(input('Silahkan masukkan uang Anda: '))
+
+        # Hitung selisih antara bayar dengan total
+        selisih = totalHarga - bayar
+
+        # Bandingkan antara uang dengan total harga
+        if selisih > 0: 
+            print(f'Uang Anda kurang sebesar Rp.{selisih}')
+            continue
+        
+        # Ucapkan terima kasih ketika selesai pembayaran
+        else:
+            print(f'''Terimakasih. Uang kembalian Anda: {abs(selisih)}''')
+            break
