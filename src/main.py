@@ -6,6 +6,21 @@ daftarBuah = [
     [2, 'Anggur', 25, 20000]
 ]
 
+# # Skema ke-1
+# daftarBuah = {
+#     'indeks': [0, 1, 2],
+#     'nama': ['Apel', 'Jeruk', 'Anggur'],
+#     'stock': [20, 15, 25],
+#     'harga': [10000, 15000, 20000]
+# }
+
+# # Skema ke-2
+# daftarBuah = {
+#     'Apel': [0, 20, 10000],
+#     'Jeruk': [1, 15, 15000],
+#     'Anggur': [2, 20, 20000]
+# }
+
 def main():
     listMenu = '''
 Selamat Datang di Pasar Buah!'

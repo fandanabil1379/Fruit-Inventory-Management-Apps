@@ -110,26 +110,32 @@ def delete(database):
     show(database)
 
 def buy(database):
-    # Menampilkan database
-    show(database)
+    # Menyalin database ke dalam penyimpanan sementara
+    databaseTemp = database.copy()
     
-    reorder = None
+    # Definisi variabel untuk menyimpan belanjaan
     keranjang = []
+
+    # Proses pembelian
+    reorder = None
     while reorder != 'No':
+        # Menampilkan database
+        show(databaseTemp)
+
         # Meminta input untuk indeks dan jumlah buah yang ingin dibeli
         id = integer_validation(
             title='Silahkan masukkan indeks buah: ',
             minval=0,
-            maxval=len(database)-1
+            maxval=len(databaseTemp)-1
             )
         stock = integer_validation(
             title='Silahkan masukkan jumlah buah: ',
             minval=0,
-            maxval=database[id][2]
+            maxval=databaseTemp[id][2]
             )
         
         # Menambahkan ke dalam keranjang belanja
-        keranjang.append([database[id][1], stock, database[id][3]])
+        keranjang.append([databaseTemp[id][1], stock, databaseTemp[id][3]])
 
         # Menampilkan keranjang belanja
         show(database=keranjang, header=['Nama', 'Qty', 'Harga'])
@@ -143,23 +149,32 @@ def buy(database):
                 reorder = 'No'
             break
 
+        # Update stock sementara
+        databaseTemp[id][2] -= stock
+
     # Menghitung total harga
     total = 0
     for id, item in enumerate(keranjang):
         # Hitung total harga per buah
-        totalHarga = item[1] * item[2]
+        totalHargaBuah = item[1] * item[2]
 
         # Input total harga ke keranjang
-        keranjang[id].append(totalHarga)
+        keranjang[id].append(totalHargaBuah)
 
         # Sum seluruh harga
-        total += totalHarga
+        total += totalHargaBuah
 
     # Menampilkan keranjang belanja
     show(database=keranjang, header=['Nama', 'Qty', 'Harga', 'Total Harga'])
 
+    # Menampilkan uang yang harus dibayar
+    print(f'Uang yang harus Anda bayarkan adalah Rp.{total}')
+
     # Proses pembayaran
     pembayaran(total)
+
+    # Update database
+    database = databaseTemp.copy()
 
 def pembayaran(totalHarga):
     while True:
