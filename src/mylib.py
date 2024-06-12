@@ -14,7 +14,7 @@ def string_validation(title):
         if teks.isalpha() == True:
             break
         else:
-            print('Silahkan inputkan hanya teks')
+            print('Silahkan inputkan alfabet!')
     return teks.capitalize()
 
 def integer_validation(title, minval=0, maxval=100):
@@ -35,9 +35,9 @@ def integer_validation(title, minval=0, maxval=100):
             if num >= minval and num <= maxval:
                 break
             else:
-                print('Angka yang anda masukkan di luar rentang')
+                print(f'Silahkan inputkan angka diantara {minval} dan {maxval}')
         except:
-            print('Yang anda inputkan bukan bilangan')
+            print('Silahkan inputkan angka!')
     return num
 
 def show(database, header=['index', 'stock', 'name', 'price']):
@@ -48,7 +48,7 @@ def show(database, header=['index', 'stock', 'name', 'price']):
         header (list, optional): Nama kolom. Defaults to ['index', 'stock', 'name', 'price'].
     """
     # Menampilkan data dalam format tabulasi
-    print(tabulate(database, headers=header, tablefmt='grid'))
+    print(tabulate(database.values(), headers=header, tablefmt='grid'))
 
 def add(database):
     """Fungsi untuk menambahkan data ke dalam database
@@ -69,12 +69,12 @@ def add(database):
     )
 
     # Menambahkan data ke database
-    for id, buah in enumerate(database):
+    for key, buah in database.items():
         if name in buah:
-            database[id] = [id, name, stock, price]
+            database[key] = [buah[0], name, stock, price]
             break
     else:
-        database.append([id+1, name, stock, price])
+        database[name] = [len(database), name, stock, price]
 
     # Menampilkan database
     show(database)
@@ -95,16 +95,17 @@ def delete(database):
     )
 
     # Melakukan proses penghapusan sesuai indeks buah
-    for id in range(len(database)):
-        if id == idx:
-            del database[idx]
+    for key, buah in database.copy().items():
+        if idx == buah[0]:
+            del database[key]
+            break
     else:
         print('Buah yang Anda cari tidak ada')
 
     # Memperbarui urutan indeks buah
-    for id, buah in enumerate(database):
+    for id, buah in enumerate(database.values()):
         if id != buah[0]:
-            database[id][0] = id
+            database[buah[1]][0] = id
 
     # Menampilkan database
     show(database)
@@ -114,7 +115,7 @@ def buy(database):
     databaseTemp = database.copy()
     
     # Definisi variabel untuk menyimpan belanjaan
-    keranjang = []
+    keranjang = {}
 
     # Proses pembelian
     reorder = None
@@ -128,14 +129,21 @@ def buy(database):
             minval=0,
             maxval=len(databaseTemp)-1
             )
+        
+        for key, val in databaseTemp.items():
+            if id == val[0]:
+                name = key
+
         stock = integer_validation(
             title='Silahkan masukkan jumlah buah: ',
             minval=0,
-            maxval=databaseTemp[id][2]
+            maxval=databaseTemp[name][2]
             )
         
         # Menambahkan ke dalam keranjang belanja
-        keranjang.append([databaseTemp[id][1], stock, databaseTemp[id][3]])
+        keranjang.update(
+            {name: [name, stock, databaseTemp[name][3]]}
+        )
 
         # Menampilkan keranjang belanja
         show(database=keranjang, header=['Nama', 'Qty', 'Harga'])
@@ -150,16 +158,16 @@ def buy(database):
             break
 
         # Update stock sementara
-        databaseTemp[id][2] -= stock
+        databaseTemp[name][2] -= stock
 
     # Menghitung total harga
     total = 0
-    for id, item in enumerate(keranjang):
+    for key, item in keranjang.items():
         # Hitung total harga per buah
         totalHargaBuah = item[1] * item[2]
 
         # Input total harga ke keranjang
-        keranjang[id].append(totalHargaBuah)
+        keranjang[key].append(totalHargaBuah)
 
         # Sum seluruh harga
         total += totalHargaBuah
