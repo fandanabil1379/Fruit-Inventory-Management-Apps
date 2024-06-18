@@ -108,6 +108,7 @@ def delete(database):
             database[buah[1]][0] = id
 
     # Menampilkan database
+    print('\nBerhasil terhapus!')
     show(database)
 
 def buy(database):
